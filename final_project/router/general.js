@@ -74,7 +74,7 @@ public_users.get('/isbn/:isbn', async function (req, res) {
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author', async function (req, res) {
   //Write your code here
 
   let getBooksByAuthor = new Promise((resolved, rejected) =>{
@@ -110,7 +110,7 @@ public_users.get('/author/:author',function (req, res) {
 
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+public_users.get('/title/:title', async function (req, res) {
   //Write your code here
   const retrieveBooksByTitle = new Promise((resolved, rejected) => {
   
