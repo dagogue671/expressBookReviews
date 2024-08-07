@@ -27,55 +27,120 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
+public_users.get('/', async function (req, res) {
   //Write your code here
-  return res.status(300).json(books, null, 4);
+  const getBooks = new Promise((resolve, rejected) => {
+
+    let success = books != null ? true : false;
+    
+    if(success)
+    {
+      resolve(res.status(300).json(books, null, 4));
+    }
+    else{
+      rejected(res.status(400).send("Book List Empty"));
+    }
+  });
+
+  getBooks.then(() => console.log("Get Books Promise Resolved"))
+    .catch(() => console.log("Unable to Get Book list"));
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
   //Write your code here
-  const isbn = req.params.isbn;
+  const getBooksbyISBN = new Promise((resolve, rejected) => {
+    const isbn = req.params.isbn;
+    let retrieveBooks = books[isbn];
+   
+    let success = retrieveBooks != null ? true : false;
 
-  let retrieveBooks = books[isbn];
+    if(success)
+    {
+      resolve(res.status(300).json(retrieveBooks, null, 4));
+    }
+    else
+    {
+      rejected(res.status(400).send("Unable to find book by ISBN"));
+    }
+    
+  });
 
-  return res.status(300).json(retrieveBooks, null, 4);
+  getBooksbyISBN
+    .then(() => console.log("Found Book by ISBN"))
+    .catch(() => console.log("Unable to find book by ISBN"));
+
+  
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
-  const author = req.params.author;
 
-  if(author.length > 0)
-  {
-    let retrieveBooks = Object.values(books).filter(book => book.author === author);
+  let getBooksByAuthor = new Promise((resolved, rejected) =>{
 
-    return res.status(300).json(retrieveBooks, null, 4);
-  }
-  else{
-    return res.status(400).send("Bad request");
-  }
+    const author = req.params.author;
+    let retrieveBooks = [];
 
+    if(author.length > 0)
+    {
+      retrieveBooks = Object.values(books).filter(book => book.author === author);
+    }
+    else{
+      retrieveBooks = null;
+    }
 
-})
+    let success = retrieveBooks.length > 0 ? true : false;
+
+    if(success)
+      {
+       resolved(res.status(300).json(retrieveBooks, null, 4));
+      }
+      else{
+       rejected(res.status(400).send("Bad request"));
+     }
+   
+  });
+ 
+  getBooksByAuthor
+    .then(() => console.log("Found Books by Author"))
+    .catch(() => console.log("Unable to find Book(s) by Author"));
+
+});
 
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title', function (req, res) {
   //Write your code here
+  const retrieveBooksByTitle = new Promise((resolved, rejected) => {
+  
   const title = req.params.title;
+  let retrieveTitle = [];
 
   if(title.length > 0)
   {
-    let retrieveTitle = Object.values(books).filter(book => book.title === title);
-
-    return res.status(300).json(retrieveTitle, null, 4);
+    retrieveTitle = Object.values(books).filter(book => book.title === title);
   }
   else
   {
-    return res.status(400).send("Bad request");
+    retrieveTitle = null;
   }
+
+  let success = retrieveTitle.length > 0 ? true : false;
+
+  if(success)
+  {
+    resolved(res.status(300).json(retrieveTitle, null, 4));
+  }
+  else
+  {
+    rejected(res.status(400).send("Bad Request"));
+  }
+  })
+
+  retrieveBooksByTitle
+    .then(() => console.log("Retrived Books by Title"))
+    .catch(() => console.log("Unable to find Book(s) by Title"));
 
 });
 
